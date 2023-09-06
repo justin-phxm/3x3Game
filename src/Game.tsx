@@ -153,6 +153,29 @@ export default function Game() {
       setEmptyCell(newEmptyCell);
     }
   }
+  // Must have an even number of inversions to be solvable
+
+  function isSo() {
+    let puzzle = squishArray(board);
+    let invCount = getInvCount(puzzle);
+    let isSolvable = invCount % 2 === 0;
+    console.log(isSolvable);
+    return isSolvable;
+  }
+  function squishArray(arr: number[][]) {
+    let newArr: number[] = [];
+    for (let i = 0; i < arr.length; i++) {
+      newArr = newArr.concat(arr[i]);
+    }
+    return newArr;
+  }
+  function getInvCount(arr: number[]) {
+    let inv_count = 0;
+    for (let i = 0; i < 9 - 1; i++)
+      for (let j = i + 1; j < 9; j++)
+        if (arr[j] && arr[i] && arr[i] > arr[j]) inv_count++;
+    return inv_count;
+  }
 
   return (
     <>
@@ -175,9 +198,10 @@ export default function Game() {
           </div>
         ))}
       </section>
+      <button onClick={isSo}>CHeck if Solvable</button>
       <button
         onClick={() => shuffleArray(myArray)}
-        class="bg-green-400 text-xl m-4"
+        class="bg-green-400 text-xl m-4 hover:-translate-y-1 hover:bg-green-300 rounded-md outline-none transition-all duration-300"
       >
         Restart
       </button>
