@@ -204,6 +204,26 @@ export default function Game() {
           </div>
         ))}
       </section>
+      <div>Use Arrow Keys to play</div>
+
+      {/* grid grid-cols-3 grid-rows-2  */}
+      <div id="buttons" class="w-full flex flex-col items-center gap-1 pt-5">
+        <button id="console-button" class="bg-green-300" onClick={moveUp}>
+          <img src="arrow-button.svg" alt="" />
+        </button>
+        <div class="grid grid-cols-3 gap-1">
+          <button id="console-button" class=" bg-green-300 " onClick={moveLeft}>
+            <img src="arrow-button.svg" alt="" class="-rotate-90 " />
+          </button>
+          <button id="console-button" class="bg-green-300" onClick={moveDown}>
+            <img src="arrow-button.svg" alt="" class="rotate-180" />
+          </button>
+          <button id="console-button" class="bg-green-300" onClick={moveRight}>
+            <img src="arrow-button.svg" alt="" class="rotate-90 " />
+          </button>
+        </div>
+      </div>
+
       <button
         onClick={() => shuffleArray(myArray)}
         class="bg-green-400 text-xl m-4 hover:-translate-y-1 hover:bg-green-300 rounded-md outline-none transition-all duration-300"
