@@ -39,7 +39,7 @@ export default function Game() {
       for (var x = array[0].length - 1; x >= 0; x--) {
         if (array[y][x] === 0) {
           var emptyCell = { x: x, y: y };
-          console.log(emptyCell);
+          // console.log(emptyCell);
           return emptyCell;
         }
       }
@@ -91,55 +91,68 @@ export default function Game() {
   }
   function moveLeft() {
     if (emptyCell.x > 0) {
-      // Copy the current board to avoid mutating the state directly
+      const newEmptyCell = { x: emptyCell.x - 1, y: emptyCell.y };
+
+      // Create a new board state by swapping the values
       const newBoard = [...board];
+      newBoard[emptyCell.y][emptyCell.x] =
+        newBoard[newEmptyCell.y][newEmptyCell.x];
+      newBoard[newEmptyCell.y][newEmptyCell.x] = 0;
 
-      // Swap the values between the empty cell and the cell to the left
-      const targetValue = newBoard[emptyCell.y][emptyCell.x - 1];
-      newBoard[emptyCell.y][emptyCell.x] = targetValue;
-      newBoard[emptyCell.y][emptyCell.x - 1] = 0;
-
-      // Update the state with the new board and empty cell position
+      // Update both the board and emptyCell states together
       setBoard(newBoard);
-      setEmptyCell((prevCell) => ({ ...prevCell, x: prevCell.x - 1 }));
+      setEmptyCell(newEmptyCell);
     }
   }
   function moveUp() {
     if (emptyCell.y > 0) {
+      // Calculate the new coordinates for the empty cell
+      const newEmptyCell = { x: emptyCell.x, y: emptyCell.y - 1 };
+
+      // Create a new board state by swapping the values
       const newBoard = [...board];
+      newBoard[emptyCell.y][emptyCell.x] =
+        newBoard[newEmptyCell.y][newEmptyCell.x];
+      newBoard[newEmptyCell.y][newEmptyCell.x] = 0;
 
-      const targetValue = newBoard[emptyCell.y - 1][emptyCell.x];
-      newBoard[emptyCell.y][emptyCell.x] = targetValue;
-      newBoard[emptyCell.y - 1][emptyCell.x] = 0;
-
+      // Update both the board and emptyCell states together
       setBoard(newBoard);
-      setEmptyCell((prevCell) => ({ ...prevCell, y: prevCell.y - 1 }));
+      setEmptyCell(newEmptyCell);
     }
   }
+
   function moveRight() {
     if (emptyCell.x < 2) {
+      const newEmptyCell = { x: emptyCell.x + 1, y: emptyCell.y };
+
+      // Create a new board state by swapping the values
       const newBoard = [...board];
+      newBoard[emptyCell.y][emptyCell.x] =
+        newBoard[newEmptyCell.y][newEmptyCell.x];
+      newBoard[newEmptyCell.y][newEmptyCell.x] = 0;
 
-      const targetValue = newBoard[emptyCell.y][emptyCell.x + 1];
-      newBoard[emptyCell.y][emptyCell.x] = targetValue;
-      newBoard[emptyCell.y][emptyCell.x + 1] = 0;
-
+      // Update both the board and emptyCell states together
       setBoard(newBoard);
-      setEmptyCell((prevCell) => ({ ...prevCell, x: prevCell.x + 1 }));
+      setEmptyCell(newEmptyCell);
     }
   }
   function moveDown() {
     if (emptyCell.y < 2) {
+      // Calculate the new coordinates for the empty cell
+      const newEmptyCell = { x: emptyCell.x, y: emptyCell.y + 1 };
+
+      // Create a new board state by swapping the values
       const newBoard = [...board];
+      newBoard[emptyCell.y][emptyCell.x] =
+        newBoard[newEmptyCell.y][newEmptyCell.x];
+      newBoard[newEmptyCell.y][newEmptyCell.x] = 0;
 
-      const targetValue = newBoard[emptyCell.y + 1][emptyCell.x];
-      newBoard[emptyCell.y][emptyCell.x] = targetValue;
-      newBoard[emptyCell.y + 1][emptyCell.x] = 0;
-
+      // Update both the board and emptyCell states together
       setBoard(newBoard);
-      setEmptyCell((prevCell) => ({ ...prevCell, y: prevCell.y + 1 }));
+      setEmptyCell(newEmptyCell);
     }
   }
+
   function findCenterCell() {
     console.log(board[1][1]);
   }
