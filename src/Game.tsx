@@ -32,7 +32,14 @@ export default function Game() {
     newBoard[emptyCell.y][emptyCell.x] = newBoard[1][1];
     newBoard[1][1] = 0;
     setEmptyCell({ x: 1, y: 1 });
-    setBoard(newBoard);
+    // Check if reshuffling is needed and perform it only when necessary
+    if (!isSo(newBoard)) {
+      console.log("reshuffling");
+      shuffleArray(newBoard);
+    } else {
+      // Update the board state when no reshuffling is needed
+      setBoard(newBoard);
+    }
   }
 
   // Helper function to find the empty cell
@@ -155,11 +162,10 @@ export default function Game() {
   }
   // Must have an even number of inversions to be solvable
 
-  function isSo() {
-    let puzzle = squishArray(board);
+  function isSo(arr: number[][] = board) {
+    let puzzle = squishArray(arr);
     let invCount = getInvCount(puzzle);
     let isSolvable = invCount % 2 === 0;
-    console.log(isSolvable);
     return isSolvable;
   }
   function squishArray(arr: number[][]) {
@@ -198,7 +204,6 @@ export default function Game() {
           </div>
         ))}
       </section>
-      <button onClick={isSo}>CHeck if Solvable</button>
       <button
         onClick={() => shuffleArray(myArray)}
         class="bg-green-400 text-xl m-4 hover:-translate-y-1 hover:bg-green-300 rounded-md outline-none transition-all duration-300"
