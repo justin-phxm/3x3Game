@@ -1,7 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
 
 export default function Game() {
-  // myArray[y][x]
   const myArray: number[][] = [
     [1, 2, 3],
     [4, 5, 6],
@@ -11,35 +10,37 @@ export default function Game() {
   const [emptyCell, setEmptyCell] = useState({ x: 2, y: 2 });
 
   useEffect(() => {
-    const newEmptyCell = findEmptyCell();
+    const newEmptyCell = findEmptyCell(board);
     setEmptyCell(newEmptyCell);
   }, [board]);
 
   /* Randomize array in-place using Durstenfeld shuffle algorithm */
   // https://stackoverflow.com/a/12646864/114157
   // Game cannot be solved if the number of inversions is odd
-  // Therefore we always set emptyCell to be in the center (1,1)
   function shuffleArray(array: number[][]) {
+    const newBoard = [...array];
     for (var y = array.length - 1; y > 0; y--) {
       for (var x = array[0].length - 1; x > 0; x--) {
         var j = Math.floor(Math.random() * (y + 1));
         var k = Math.floor(Math.random() * (x + 1));
         var temp = array[j][k];
-        array[j][k] = array[y][x];
-        array[y][x] = temp;
+        newBoard[j][k] = array[y][x];
+        newBoard[y][x] = temp;
       }
     }
-    setBoard(array);
+    const emptyCell = findEmptyCell(newBoard);
+    newBoard[emptyCell.y][emptyCell.x] = newBoard[1][1];
+    newBoard[1][1] = 0;
+    setEmptyCell({ x: 1, y: 1 });
+    setBoard(newBoard);
   }
 
   // Helper function to find the empty cell
-  function findEmptyCell() {
-    const array = board;
+  function findEmptyCell(array: number[][]) {
     for (var y = array.length - 1; y >= 0; y--) {
       for (var x = array[0].length - 1; x >= 0; x--) {
         if (array[y][x] === 0) {
           var emptyCell = { x: x, y: y };
-          // console.log(emptyCell);
           return emptyCell;
         }
       }
@@ -153,18 +154,6 @@ export default function Game() {
     }
   }
 
-  function findCenterCell() {
-    console.log(board[1][1]);
-  }
-  function swapCenterAndEmpty() {
-    const newBoard = [...board];
-    const targetValue = newBoard[1][1];
-    newBoard[1][1] = 0;
-    newBoard[emptyCell.y][emptyCell.x] = targetValue;
-    setBoard(newBoard);
-    setEmptyCell((prevCell) => ({ ...prevCell, y: 1, x: 1 }));
-  }
-
   return (
     <>
       <section
@@ -186,9 +175,6 @@ export default function Game() {
           </div>
         ))}
       </section>
-      <button onClick={findCenterCell}>Find Center Cell</button>
-      <button onClick={findEmptyCell}>Find Empty Cell</button>
-      <button onClick={swapCenterAndEmpty}>Swap Center and Empty</button>
       <button
         onClick={() => shuffleArray(myArray)}
         class="bg-green-400 text-xl m-4"
