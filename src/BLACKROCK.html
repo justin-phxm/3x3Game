@@ -1,0 +1,471 @@
+<!-- view-source:https://gamingph.com/blackdesertmobile/puzzle/puzzle.html -->
+<script type="text/javascript">
+  var moves = 0;
+  var tbl, rows, cols;
+  function Move(d) {
+    console.log(d);
+    var cell = GetCell(d);
+    var row = GetRow(cell);
+    var ri = row.rowIndex;
+    var ci = cell.cellIndex;
+    var emptycell;
+    if (ri > 0 && emptycell == null) {
+      if (IsCellEmpty(tbl.rows[ri - 1].cells[ci])) {
+        emptycell = tbl.rows[ri - 1].cells[ci];
+      }
+    }
+    if (ri < tbl.rows.length - 1 && emptycell == null) {
+      if (IsCellEmpty(tbl.rows[ri + 1].cells[ci])) {
+        emptycell = tbl.rows[ri + 1].cells[ci];
+      }
+    }
+    if (ci > 0 && emptycell == null) {
+      if (IsCellEmpty(tbl.rows[ri].cells[ci - 1])) {
+        emptycell = tbl.rows[ri].cells[ci - 1];
+      }
+    }
+    if (ci < row.cells.length - 1 && emptycell == null) {
+      if (IsCellEmpty(tbl.rows[ri].cells[ci + 1])) {
+        emptycell = tbl.rows[ri].cells[ci + 1];
+      }
+    }
+    if (emptycell == null) {
+      d.style.backgroundColor = "#FF3300";
+      d.style.color = "#FFFFFF";
+      setTimeout("RemoveHighlight('" + d.id + "');", 500);
+    } else {
+      ChangeParent(d, emptycell);
+      moves++;
+      document.getElementById("moves").innerHTML = moves;
+      IsInOrder();
+    }
+  }
+  function IsInOrder() {
+    var arrDiv = document.getElementsByTagName("DIV");
+    var inorder = true;
+    for (var i = 0; i < arrDiv.length - 1; i++) {
+      var n = parseInt(trim(arrDiv[i].innerHTML));
+      var n1 = parseInt(trim(arrDiv[i + 1].innerHTML));
+      if (n + 1 != n1) {
+        inorder = false;
+        break;
+      }
+    }
+    if (inorder && IsCellEmpty(tbl.rows[tbl.rows.length - 1].cells[cols - 1])) {
+      for (var i = 0; i < arrDiv.length; i++) {
+        arrDiv[i].style.backgroundColor = "#FFFFCC";
+      }
+      alert("Perfect! It took you " + moves + " moves to solve it.");
+    }
+  }
+  function Reset(rs) {
+    varout = clearTimeout(varout);
+    $("#pause_btn").val("Play");
+    $("#pause_btn").attr("disabled", false);
+    $("#next_btn").attr("disabled", false);
+    $("#prev_btn").attr("disabled", true);
+    moves = 0;
+    solN = 0;
+    document.getElementById("moves").innerHTML = moves;
+    rows = document.getElementById("rows").value;
+    if (isNaN(rows) || rows < 0) {
+      rows = 4;
+    } else {
+      rows = Math.round(document.getElementById("rows").value);
+    }
+    document.getElementById("rows").value = rows;
+    cols = document.getElementById("cols").value;
+    if (isNaN(cols) || cols < 0) {
+      cols = 4;
+    } else {
+      cols = Math.round(document.getElementById("cols").value);
+    }
+    document.getElementById("cols").value = cols;
+    tbl = document.getElementById("tbl");
+    while (tbl.rows.length > 0) {
+      tbl.deleteRow(0);
+    }
+    arrN = [
+      trim($("#tb3 > tbody > tr:nth-child(1) > td:nth-child(1)").text()),
+      trim($("#tb3 > tbody > tr:nth-child(1) > td:nth-child(2)").text()),
+      trim($("#tb3 > tbody > tr:nth-child(1) > td:nth-child(3)").text()),
+      trim($("#tb3 > tbody > tr:nth-child(2) > td:nth-child(1)").text()),
+      trim($("#tb3 > tbody > tr:nth-child(2) > td:nth-child(2)").text()),
+      trim($("#tb3 > tbody > tr:nth-child(2) > td:nth-child(3)").text()),
+      trim($("#tb3 > tbody > tr:nth-child(3) > td:nth-child(1)").text()),
+      trim($("#tb3 > tbody > tr:nth-child(3) > td:nth-child(2)").text()),
+      trim($("#tb3 > tbody > tr:nth-child(3) > td:nth-child(3)").text()),
+    ];
+    n = 0;
+    var index = -1;
+    for (var i = 0; i < 3; i++) {
+      tbl.insertRow(i);
+      var tr = tbl.rows[i];
+      for (var j = 0; j < 3; j++) {
+        tr.insertCell(j);
+        var td = tr.cells[j];
+        td.className = "cell";
+        index++;
+        if (arrN[index] == "") {
+          td.innerHTML = "";
+        } else {
+          console.log(arrN[index]);
+          td.innerHTML =
+            "<div id='n" + arrN[index] + "' class='num' >" + arrN[n] + "</div>";
+        }
+        n++;
+      }
+    }
+    applyBG();
+    if (!rs) {
+      varout = setTimeout(function () {
+        next(1);
+      }, 1000);
+      $("#pause_btn").val("Pause");
+    }
+  }
+  function Shuffle(o) {
+    for (
+      var j, x, i = o.length;
+      i;
+      j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x
+    );
+    return o;
+  }
+  function IsCellEmpty(cell) {
+    for (var i = 0; i < cell.childNodes.length; i++) {
+      if (cell.childNodes[i].className.includes("num")) {
+        return false;
+      }
+    }
+    return true;
+  }
+  function GetTable(a) {
+    var c = a.parentNode;
+    while (c.tagName != "TABLE") {
+      c = c.parentNode;
+    }
+    return c;
+  }
+  function GetRow(a) {
+    var c = a.parentNode;
+    while (c.tagName != "TR") {
+      c = c.parentNode;
+    }
+    return c;
+  }
+  function GetCell(a) {
+    var c = a.parentNode;
+    while (c.tagName != "TD") {
+      c = c.parentNode;
+    }
+    return c;
+  }
+  function GetRowIndex(a) {
+    var c = a.parentNode;
+    while (c.tagName != "TR") {
+      c = c.parentNode;
+    }
+    return c.rowIndex;
+  }
+  function GetCellIndex(a) {
+    var c = a.parentNode;
+    while (c.tagName != "TD") {
+      c = c.parentNode;
+    }
+    return c.cellIndex;
+  }
+  function AddRow(tbl, i, NumCells) {
+    var r = tbl.insertRow(i);
+    for (j = 0; j < NumCells; j++) {
+      var c = r.insertCell(j);
+      c.className = "col" + (j + 1);
+      c.innerHTML = "";
+    }
+  }
+  function sol(arr) {
+    inv = 0;
+    for (i = 0; i < arr.length; i++) {
+      for (j = i + 1; j < arr.length; j++) {
+        if (arr[i] > arr[j]) inv++;
+        if (arr[i] == 0 && i % 2 == 1) inv++;
+      }
+    }
+    if (inv % 2 == 1) return false;
+    else return true;
+  }
+  function trim(str) {
+    str = str.replace(/^\s+/, "");
+    for (var i = str.length - 1; i >= 0; i--) {
+      if (/\S/.test(str.charAt(i))) {
+        str = str.substring(0, i + 1);
+        break;
+      }
+    }
+    return str;
+  }
+  function ChangeParent(sourceElement, targetElement) {
+    var sourceElementParent = sourceElement.parentNode;
+    sourceElementParent.removeChild(sourceElement);
+    targetElement.appendChild(sourceElement);
+  }
+  var solArr;
+  var solN = 0;
+  var varout;
+  var prN;
+  function next(ap) {
+    if (solN < solArr.length) {
+      $("#prev_btn").attr("disabled", false);
+      solN++;
+      Move(
+        $(
+          "#tbl tr:nth-child(" +
+            parseInt(solArr[solN - 1][1] + 1) +
+            ") td:nth-child(" +
+            parseInt(solArr[solN - 1][0] + 1) +
+            ") div"
+        ).get(0)
+      );
+      if (ap)
+        varout = setTimeout(function () {
+          next(1);
+        }, 1000);
+      console.log();
+      if (solN < solArr.length) {
+      } else {
+        $("#pause_btn").val("Reset");
+        $("#next_btn").attr("disabled", true);
+      }
+    } else {
+      varout = clearTimeout(varout);
+      $("#pause_btn").val("Reset");
+    }
+  }
+  function prev() {
+    if (solN > 1) {
+      $("#pause_btn").attr("disabled", false);
+      $("#next_btn").attr("disabled", false);
+      $("#pause_btn").val("Play");
+      solN--;
+      moves--;
+      moves--;
+      Move(
+        $(
+          "#tbl tr:nth-child(" +
+            parseInt(solArr[solN - 1][1] + 1) +
+            ") td:nth-child(" +
+            parseInt(solArr[solN - 1][0] + 1) +
+            ") div"
+        ).get(0)
+      );
+      document.getElementById("moves").innerHTML = moves;
+    } else if (solN > 0) {
+      Reset(1);
+    } else {
+      $("#prev_btn").attr("disabled", true);
+    }
+  }
+  function solveit() {
+    if (
+      trim($("#tb2 > tbody > tr:nth-child(1) > td:nth-child(1)").text()) +
+        trim($("#tb2 > tbody > tr:nth-child(1) > td:nth-child(2)").text()) +
+        trim($("#tb2 > tbody > tr:nth-child(1) > td:nth-child(3)").text()) +
+        trim($("#tb2 > tbody > tr:nth-child(2) > td:nth-child(1)").text()) +
+        trim($("#tb2 > tbody > tr:nth-child(2) > td:nth-child(2)").text()) +
+        trim($("#tb2 > tbody > tr:nth-child(2) > td:nth-child(3)").text()) +
+        trim($("#tb2 > tbody > tr:nth-child(3) > td:nth-child(1)").text()) +
+        trim($("#tb2 > tbody > tr:nth-child(3) > td:nth-child(2)").text()) +
+        trim($("#tb2 > tbody > tr:nth-child(3) > td:nth-child(3)").text()) ==
+      ""
+    ) {
+      arrN = [
+        trim($("#tb3 > tbody > tr:nth-child(1) > td:nth-child(1)").text()),
+        trim($("#tb3 > tbody > tr:nth-child(1) > td:nth-child(2)").text()),
+        trim($("#tb3 > tbody > tr:nth-child(1) > td:nth-child(3)").text()),
+        trim($("#tb3 > tbody > tr:nth-child(2) > td:nth-child(1)").text()),
+        trim($("#tb3 > tbody > tr:nth-child(2) > td:nth-child(2)").text()),
+        trim($("#tb3 > tbody > tr:nth-child(2) > td:nth-child(3)").text()),
+        trim($("#tb3 > tbody > tr:nth-child(3) > td:nth-child(1)").text()),
+        trim($("#tb3 > tbody > tr:nth-child(3) > td:nth-child(2)").text()),
+        trim($("#tb3 > tbody > tr:nth-child(3) > td:nth-child(3)").text()),
+      ];
+      prN = [
+        [arrN[0], arrN[1], arrN[2]],
+        [arrN[3], arrN[4], arrN[5]],
+        [arrN[6], arrN[7], arrN[8]],
+      ];
+      console.log(":::" + isSo(prN));
+      arrN[arrN.indexOf("")] = "0";
+      var form_data = [
+        { name: "path", value: JSON.stringify(arrN) },
+        { name: "sol", value: sol(arrN) },
+      ];
+      console.log(form_data);
+      $("#play_btn").attr("disabled", true);
+      $("#pause_btn").attr("disabled", true);
+      $("#solve_btn").attr("disabled", true);
+      $("#solve_btn").val("Solving, please wait..");
+      fLout = clearTimeout(fLout);
+      fLoad();
+      $.post("process.php", $.param(form_data), function (data) {
+        console.log(data);
+        fLout = clearTimeout(fLout);
+        if (trim(data) == "This grid setting is not solvable") {
+          alert(
+            "Sorry our Puzzle Solver cannot solve this pattern.\n\nThe pattern you've added has an odd pair of inversed pieces which are impossible to solve. Black Desert Mobile doesn't put an reversed pairs.\n\nPlease make sure that the puzzle combination you've placed is correct and matched from the game."
+          );
+          $("#play_btn").attr("disabled", false);
+          $("#pause_btn").attr("disabled", false);
+          $("#solve_btn").attr("disabled", false);
+          $("#solve_btn").val("Solve");
+        } else {
+          $("#play_btn").attr("disabled", false);
+          $("#pause_btn").attr("disabled", false);
+          $("#solve_btn").attr("disabled", false);
+          $("#solve_btn").val("Solve");
+          console.log(data);
+          data = data.replace("],]", "]]");
+          console.log(data);
+          solArr = JSON.parse(data);
+          Reset();
+          document
+            .querySelector("#solution")
+            .scrollIntoView({ behavior: "smooth" });
+        }
+      });
+    } else {
+      alert("Please drag all puzzle pieces");
+    }
+  }
+  function allowDrop(ev) {
+    ev.preventDefault();
+    console.log(ev);
+  }
+  function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+    $(ev.target).addClass("moving");
+    console.log(ev.target);
+  }
+  function leave(ev) {}
+  function drop(ev) {
+    ev.preventDefault();
+    console.log(ev.target.innerHTML);
+    var data = ev.dataTransfer.getData("text");
+    if (isEmptyOrSpaces(ev.target.innerHTML.trim())) {
+      if (!ev.target.draggable) {
+        ev.target.appendChild(document.getElementById(data));
+      }
+    }
+  }
+  function end(ev) {
+    $(ev.target).removeClass("moving");
+  }
+  function play() {
+    varout = setTimeout(function () {
+      next(1);
+    }, 1000);
+  }
+  function toggle() {
+    if ($("#pause_btn").val() == "Reset") {
+      Reset();
+    } else {
+      if (varout === undefined) {
+        play();
+        $("#pause_btn").val("Pause");
+      } else {
+        varout = clearTimeout(varout);
+        $("#pause_btn").val("Play");
+      }
+    }
+  }
+  function isEmptyOrSpaces(str) {
+    return str === null || str.match(/^ *$/) !== null;
+  }
+  function getInvCount(arr) {
+    inv_count = 0;
+    for (i = 0; i < 9 - 1; i++)
+      for (j = i + 1; j < 9; j++)
+        if (arr[j] && arr[i] && arr[i] > arr[j]) inv_count++;
+    return inv_count;
+  }
+  // Must have an even number of inversions to be solvable
+  function isSo(puzzle) {
+    invCount = getInvCount(puzzle);
+    return invCount % 2 != 0;
+  }
+  function px(str) {
+    arr = str.split("-");
+    return [
+      [arr[0], arr[1], arr[2]],
+      [arr[3], arr[4], arr[5]],
+      [arr[6], arr[7], arr[8]],
+    ];
+  }
+  var glide;
+  function init() {
+    glide = new Glide("#intro", {
+      startAt: 11,
+      type: "carousel",
+      perView: 4,
+      focusAt: "center",
+      breakpoints: { 800: { perView: 2 }, 480: { perView: 1 } },
+    });
+    glide.mount();
+    glide.on("swipe.end", function () {
+      applyBG();
+    });
+  }
+  function applyBG() {
+    $(".num").removeClass("pz1");
+    $(".num").removeClass("pz2");
+    $(".num").removeClass("pz3");
+    $(".num").removeClass("pz4");
+    $(".num").removeClass("pz5");
+    $(".num").removeClass("pz6");
+    $(".num").removeClass("pz7");
+    $(".num").removeClass("pz8");
+    $(".num").removeClass("pz9");
+    $(".num").removeClass("pz10");
+    $(".num").removeClass("pz11");
+    $(".num").removeClass("pz12");
+    $(".num").removeClass("pz13");
+    if (glide.index == 12) $(".num").addClass("pz13");
+    else if (glide.index == 1) $(".num").addClass("pz2");
+    else if (glide.index == 2) $(".num").addClass("pz3");
+    else if (glide.index == 3) $(".num").addClass("pz4");
+    else if (glide.index == 4) $(".num").addClass("pz5");
+    else if (glide.index == 5) $(".num").addClass("pz6");
+    else if (glide.index == 6) $(".num").addClass("pz7");
+    else if (glide.index == 7) $(".num").addClass("pz8");
+    else if (glide.index == 8) $(".num").addClass("pz9");
+    else if (glide.index == 9) $(".num").addClass("pz10");
+    else if (glide.index == 10) $(".num").addClass("pz11");
+    else if (glide.index == 11) $(".num").addClass("pz12");
+    else $(".num").addClass("pz1");
+  }
+  var fLout;
+  fLm = [
+    "Solving the puzzle.",
+    "Solving the puzzle..",
+    "Solving the puzzle...",
+    "Solving the puzzle....",
+    "Solving the puzzle.....",
+    "Solving the puzzle......",
+  ];
+  function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  var fLs = 0;
+  function fLoad(dxf) {
+    if (dxf == 1) fLs++;
+    else fLs = 0;
+    fLout = setTimeout(function () {
+      $("#solve_btn").val(
+        fLm[getRandomIntInclusive(0, 5)] + " (" + fLs + " sec)"
+      );
+      fLoad(1);
+    }, 1000);
+  }
+</script>
