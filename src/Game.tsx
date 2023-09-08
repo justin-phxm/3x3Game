@@ -8,7 +8,7 @@ export default function Game() {
   ];
   const [board, setBoard] = useState(myArray);
   const [emptyCell, setEmptyCell] = useState({ x: 2, y: 2 });
-
+  const [moves, setMoves] = useState(0);
   useEffect(() => {
     const newEmptyCell = findEmptyCell(board);
     setEmptyCell(newEmptyCell);
@@ -40,6 +40,7 @@ export default function Game() {
       // Update the board state when no reshuffling is needed
       setBoard(newBoard);
     }
+    setMoves(0);
   }
 
   // Helper function to find the empty cell
@@ -91,7 +92,7 @@ export default function Game() {
       case 40: //down arrow key
         moveDown();
         if (checkWin()) {
-          alert("You win!");
+          alert(`You win! You completed the puzzle in ${moves} moves`);
           return;
         }
         break;
@@ -110,6 +111,7 @@ export default function Game() {
       // Update both the board and emptyCell states together
       setBoard(newBoard);
       setEmptyCell(newEmptyCell);
+      setMoves(moves + 1);
     }
   }
   function moveUp() {
@@ -126,6 +128,7 @@ export default function Game() {
       // Update both the board and emptyCell states together
       setBoard(newBoard);
       setEmptyCell(newEmptyCell);
+      setMoves(moves + 1);
     }
   }
 
@@ -142,6 +145,7 @@ export default function Game() {
       // Update both the board and emptyCell states together
       setBoard(newBoard);
       setEmptyCell(newEmptyCell);
+      setMoves(moves + 1);
     }
   }
   function moveDown() {
@@ -158,6 +162,7 @@ export default function Game() {
       // Update both the board and emptyCell states together
       setBoard(newBoard);
       setEmptyCell(newEmptyCell);
+      setMoves(moves + 1);
     }
   }
   // Must have an even number of inversions to be solvable
@@ -230,6 +235,7 @@ export default function Game() {
       >
         Restart
       </button>
+      <div>Moves: {moves}</div>
     </>
   );
 }
