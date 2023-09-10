@@ -1,5 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
-
+import Timer from "./Timer";
 export default function Game() {
   const myArray: number[][] = [
     [1, 2, 3],
@@ -61,42 +61,30 @@ export default function Game() {
     for (var y = 0; y < board.length; y++) {
       for (var x = 0; x < board[0].length; x++) {
         if (board[y][x] !== myArray[y][x]) {
-          return false;
+          return;
         }
       }
     }
-    return true;
+    alert(`You win! You completed the puzzle in ${moves} moves`);
   }
   function getKeyAndMove(e: { which: any; keyCode: any }) {
     var key_code = e.which || e.keyCode;
     switch (key_code) {
       case 37: //left arrow key
         moveLeft();
-        if (checkWin()) {
-          alert("You win!");
-          return;
-        }
+        checkWin();
         break;
       case 38: //Up arrow key
         moveUp();
-        if (checkWin()) {
-          alert("You win!");
-          return;
-        }
+        checkWin();
         break;
       case 39: //right arrow key
         moveRight();
-        if (checkWin()) {
-          alert("You win!");
-          return;
-        }
+        checkWin();
         break;
       case 40: //down arrow key
         moveDown();
-        if (checkWin()) {
-          alert(`You win! You completed the puzzle in ${moves} moves`);
-          return;
-        }
+        checkWin();
         break;
     }
   }
@@ -212,8 +200,6 @@ export default function Game() {
         ))}
       </section>
       <div>Use Arrow Keys to play</div>
-
-      {/* grid grid-cols-3 grid-rows-2  */}
       <div id="buttons" class="w-full flex flex-col items-center gap-1 pt-5">
         <button id="console-button" class="bg-green-300" onClick={moveUp}>
           <img src="arrow-button.svg" alt="" />
@@ -230,14 +216,8 @@ export default function Game() {
           </button>
         </div>
       </div>
-
-      <button
-        onClick={() => shuffleArray(myArray)}
-        class="bg-green-400 text-xl m-4 hover:-translate-y-1 hover:bg-green-300 rounded-md outline-none transition-all duration-300"
-      >
-        Restart
-      </button>
       <div>Moves: {moves}</div>
+      <Timer shuffleArray={shuffleArray} myArray={myArray} />
     </>
   );
 }

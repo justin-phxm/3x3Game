@@ -1,6 +1,9 @@
 import { useState, useEffect } from "preact/hooks";
-
-export default function Timer() {
+interface TimerProps {
+  shuffleArray: (array: number[][]) => void;
+  myArray: number[][];
+}
+export default function Timer(props: TimerProps) {
   const [seconds, setSeconds] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [intervalId, setIntervalId] = useState<undefined | number>(undefined);
@@ -30,6 +33,7 @@ export default function Timer() {
       setSeconds((prevTime) => prevTime + 1);
     }, 1000);
     setIntervalId(newIntervalId); // Store the new interval ID
+    props.shuffleArray(props.myArray);
   }
   function formatTime(time: number) {
     let formattedTime = time.toLocaleString("en-US", {
@@ -40,10 +44,15 @@ export default function Timer() {
   }
   return (
     <>
-      <button onClick={resetTime}>Reset Time</button>
       <div>
         Time: {formatTime(minutes)}: {formatTime(seconds)}
       </div>
+      <button
+        onClick={resetTime}
+        class="bg-green-400 text-xl m-4 hover:-translate-y-1 hover:bg-green-300 rounded-md outline-none transition-all duration-300"
+      >
+        Reset Game
+      </button>
     </>
   );
 }
