@@ -41,6 +41,8 @@ export default function Game() {
       setBoard(newBoard);
     }
     setMoves(0);
+    // setStartTime(Date.now());
+    // setTime(0);
   }
 
   // Helper function to find the empty cell
